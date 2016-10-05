@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        #banner{
+            height: 286px;
+            width:478px;
+            overflow:hidden;
+            position: relative;
+        }
+        .banner_list .active{
+            z-index: 1;!important;
+            opacity: 1;
+        }
+        .banner_list a{
+            position: absolute;
+            top:0;
+            z-index: 0;
+            opacity: 0;
+            transition: opacity 1s;
+        }
+        .list{
+            position: absolute;
+            z-index: 99;
+            display: flex;
+            list-style-type: none;
+            justify-content: space-between;
+            bottom: 10px;
+            right: 20px;
+
+        }
+        .list li {
+            width: 15px;
+            height: 15px;
+            background-color: beige;
+            border-radius: 50%;
+            padding-left: 6px;
+            padding-bottom: 6px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+<div id="banner">
+    <div class="banner_bg"></div>  <!--标题背景-->
+    <a href="#" class="banner_info"></a> <!--标题-->
+    <ul class="list"></ul>
+    <div class="banner_list">
+        <a href="#" target="_blank"><img src="imgs/p1.jpg" title="橡树小屋的blog1" alt="橡树小屋的blog" /></a>
+        <a href="#" target="_blank"><img src="imgs/p5.jpg" title="橡树小屋的blog2" alt="橡树小屋的blog" /></a>
+        <a href="#" target="_blank"><img src="imgs/p3.jpg" title="橡树小屋的blog3" alt="橡树小屋的blog" /></a>
+        <a href="#" target="_blank"><img src="imgs/p4.jpg" title="橡树小屋的blog4" alt="橡树小屋的blog" /></a>
+    </div>
+</div>
+<script>
+    var sliceBox = (function(){
+        var list_dom = null;    //链接的container
+        var container = null;   //轮播图的主题
+        var list = null;    //这个dom标示图片的按钮
+        var img_list = [];
+        var c_list = [];
+
+        var cur_num = 0;
+        var pic_num = 0;
+
+        var timer = null;
+        var duration = 1000;
+
+        function changePic(){
+            img_list[cur_num].classList.remove("active");
+            cur_num = (cur_num+1)%pic_num;
+            img_list[cur_num].classList.add("active");
+            timer = setTimeout(changePic,duration);
+        }
+
+        function init(selector,duration_time){
+            duration = duration_time;
+            container = document.querySelector(selector);
+            list_dom = container.querySelector(".banner_list");
+            pic_num = list_dom.childElementCount;
+            img_list = Array.prototype.slice.call(list_dom.children);
+            img_list[0].classList.add("active");
+            timer = setTimeout(changePic,duration);
+            addButton();
+        }
+
+        function addButton(){
+            list = container.querySelector(".list");
+            for(var i=0;i<pic_num;i++){
+                var li = document.createElement("li");
+                c_list.push(li);
+                li.textContent = i+1;
+                li.onclick = function(e){
+                    clearTimeout(timer);
+                    img_list[cur_num].classList.remove("active");
+                    cur_num = parseInt(e.target.textContent)-1;
+                    img_list[cur_num].classList.add("active");
+                    timer = setTimeout(changePic,duration);
+                };
+                list.appendChild(li);
+            }
+        }
+
+        return {
+            init:init
+        }
+    })();
+    sliceBox.init("#banner",2000);
+
+</script>
+</body>
+</html>
